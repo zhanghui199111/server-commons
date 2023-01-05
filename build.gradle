@@ -1,0 +1,108 @@
+group 'outfox.infra'
+version '1.2.4'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+buildscript {
+    ext {
+        springBootVersion = '2.3.5.RELEASE'
+    }
+    repositories {
+        maven {
+            url "https://maven.aliyun.com/nexus/content/repositories/central/"
+        }
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.BIN
+    gradleVersion = "6.6"
+}
+
+allprojects {
+    repositories {
+        maven {
+            url "https://maven.aliyun.com/nexus/content/repositories/central/"
+        }
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.3.5.RELEASE'
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.3.5.RELEASE'
+    compile group: 'redis.clients', name: 'jedis', version: '3.3.0'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.0'
+
+    // http
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.4'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.12'
+
+    // elasticsearch
+    compile group: 'org.elasticsearch.client', name: 'elasticsearch-rest-high-level-client', version: '7.10.0'
+    compile (group: 'org.springframework.boot', name: 'spring-boot-starter-data-elasticsearch', version: '2.3.5.RELEASE') {
+        exclude group: 'org.elasticsearch.client', module: 'elasticsearch-rest-high-level-client'
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter'
+    }
+
+    // fastjson
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.75'
+
+    // apache commons
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    compile group: 'javax', name: 'javaee-api', version: '8.0.1'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+    testCompile group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.5.RELEASE'
+}
+
+ext {
+    jarName = 'server-commons'
+}
+
+jar {
+    enabled = true
+    baseName = jarName
+    exclude (
+            "application**",
+            "context.xml",
+            "log4j2**"
+    )
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = "$project.group"
+            artifactId = jarName
+            version = "$project.version"
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = ""
+                password = ""
+            }
+
+            url = ""
+        }
+    }
+}

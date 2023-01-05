@@ -1,0 +1,18 @@
+spring:
+  redis:
+    cluster:
+      nodes: 10.109.7.227:7000,10.109.7.227:7001,10.109.7.227:7002,10.109.7.227:7003,10.109.7.227:7004,10.109.7.227:7005
+    timeout: 2000
+    jedis:
+      pool:
+        max-active: 200
+        max-wait: 50
+        max-idle: 50
+        min-idle: 5
+  elasticsearch:
+    rest:
+      uris: 10.109.15.134:9200,10.109.1.100:9200,10.109.5.162:9200
+infra:
+  redis:
+    key:
+      prefix: SERVER-COMMONS
